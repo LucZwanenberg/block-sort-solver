@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "tsc && node dist/server.js"
+    "build": "tsc",
+    "dev": "yarn run build && node dist/server.js"
   },
   "dependencies": {
     "ws": "^8.18.0"
