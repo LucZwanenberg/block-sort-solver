@@ -3,10 +3,13 @@
   "packageManager": "yarn@4.3.1",
   "workspaces": [
     "block-sort",
-    "server"
+    "server",
+    "solver"
   ],
   "scripts": {
     "dev": "yarn workspaces foreach --all --parallel --interlaced run dev",
-    "build": "yarn workspaces foreach --all --parallel --interlaced run build"
+    "build": "yarn workspaces foreach --all --parallel --interlaced run build",
+    "start:solver": "yarn workspace solver start",
+    "solver": "yarn workspace solver start"
   }
 }

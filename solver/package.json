@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "build": "tsc",
+    "start": "yarn run build && node dist/solver.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.6",
+    "@types/ws": "^8.5.12",
+    "typescript": "^5.6.3"
+  },
+  "packageManager": "yarn@4.5.1",
+  "name": "solver",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}
