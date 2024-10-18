@@ -3355,7 +3355,7 @@ __metadata:
   resolution: "types-react@npm:19.0.0-rc.1"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/ca9f63c1c54d7056e25311e007b184a2526200194cd1f92b27debc404446ec0d5a73170e0d4d99262f4c5525fefd5e628b6a11d08a0e6c4cbd747e3318217b9d
+  checksum: 10c0/408cd9f3f960e806d510f7a9a3569f92a7f1cff3c57f5465fab4c139f0020c88dc7a08e6f357d2a116bd2c76e641851ce84527cb765f36824a6e818e0d477bbc
   languageName: node
   linkType: hard
 
