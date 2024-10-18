@@ -5,6 +5,7 @@ import { Message } from "@/ui/Message/Message";
 import { TopButton } from "@/ui/TopButton/TopButton";
 import { WoodButton } from "@/ui/WoodButton/WoodButton";
 
+import useWebSockets from "@/api/useWebSockets";
 import { sound } from "@/audio";
 import { moveBlocks, selectFromColumn } from "@/game/actions";
 import { getLevelTypeByType, LevelTypeString } from "@/game/level-types";
@@ -47,6 +48,10 @@ export const Level: React.FC<Props> = ({
   storageKey,
   storagePrefix = "",
 }) => {
+  const { addMessageListener, sendMessage } = useWebSockets(
+    "ws://localhost:8080",
+  );
+
   const [playState, setPlayState] = useState<
     "won" | "lost" | "busy" | "restarting"
   >("busy");
@@ -97,6 +102,9 @@ export const Level: React.FC<Props> = ({
     }
 
     const cleanup = setTimeout(() => setStarted(true), 300);
+    sendMessage({
+      type: "LEVEL_STARTED",
+    });
     return () => clearTimeout(cleanup);
   }, []);
 
@@ -106,9 +114,15 @@ export const Level: React.FC<Props> = ({
     if (hasWon(levelState)) {
       setPlayState("won");
       setLostCounter(0);
+      sendMessage({
+        type: "LEVEL_WON",
+      });
     } else if (isStuck(levelState)) {
       setPlayState("lost");
       setLostCounter((a) => a + 1);
+      sendMessage({
+        type: "LEVEL_LOST",
+      });
     }
     if (selectStart && selectStart[2] !== levelState) {
       setSelectStart(null);
@@ -151,11 +165,19 @@ export const Level: React.FC<Props> = ({
     // column, index fashion to 'reveal' fog
 
     setLevelMoves((moves) => moves.concat({ from, to }));
+    sendMessage({
+      type: "MOVE_MADE",
+      from,
+      to,
+    });
   };
 
   const onColumnClick = (columnIndex: number) => {
     if (selectStart) {
       if (selectStart[0] === columnIndex) {
+        sendMessage({
+          type: "SELECTION_CANCELLED",
+        });
         setSelectStart(null);
         return;
       }
@@ -165,9 +187,22 @@ export const Level: React.FC<Props> = ({
       const selection = selectFromColumn(levelState, columnIndex);
       if (selection.length > 0) {
         setSelectStart([columnIndex, selection.length, levelState]);
+        sendMessage({
+          type: "SELECTION_MADE",
+          columnIndex,
+          selectionLength: selection.length,
+        });
       }
     }
   };
+
+  useEffect(
+    () =>
+      addMessageListener((message) => {
+        console.log("MESSAGE RECEIVED IN LEVEL", { message });
+      }),
+    [addMessageListener],
+  );
 
   return (
     <div className="flex h-full flex-col">
