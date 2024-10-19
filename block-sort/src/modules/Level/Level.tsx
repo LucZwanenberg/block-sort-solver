@@ -5,7 +5,6 @@ import { Message } from "@/ui/Message/Message";
 import { TopButton } from "@/ui/TopButton/TopButton";
 import { WoodButton } from "@/ui/WoodButton/WoodButton";
 
-import useWebSockets from "@/api/useWebSockets";
 import { sound } from "@/audio";
 import { moveBlocks, selectFromColumn } from "@/game/actions";
 import { getLevelTypeByType, LevelTypeString } from "@/game/level-types";
@@ -21,6 +20,7 @@ import { ThemeContext } from "@/modules/Layout/ThemeContext";
 import { mulberry32, pick } from "@/support/random";
 import { getActiveModifiers, getToday } from "@/support/themes";
 import { useGameStorage } from "@/support/useGameStorage";
+import useWebSocket from "@/support/websockets/useWebSocket";
 
 import { BackgroundContext } from "../Layout/BackgroundContext";
 
@@ -48,9 +48,9 @@ export const Level: React.FC<Props> = ({
   storageKey,
   storagePrefix = "",
 }) => {
-  const { addMessageListener, sendMessage } = useWebSockets(
-    "ws://localhost:8080",
-  );
+  const { sendMessage } = useWebSocket((message) => {
+    console.log({ message });
+  });
 
   const [playState, setPlayState] = useState<
     "won" | "lost" | "busy" | "restarting"
@@ -102,6 +102,7 @@ export const Level: React.FC<Props> = ({
     }
 
     const cleanup = setTimeout(() => setStarted(true), 300);
+    console.log("GOTHERE");
     sendMessage({
       type: "LEVEL_STARTED",
     });
@@ -195,14 +196,6 @@ export const Level: React.FC<Props> = ({
       }
     }
   };
-
-  useEffect(
-    () =>
-      addMessageListener((message) => {
-        console.log("MESSAGE RECEIVED IN LEVEL", { message });
-      }),
-    [addMessageListener],
-  );
 
   return (
     <div className="flex h-full flex-col">
