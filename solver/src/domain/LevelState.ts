@@ -1,6 +1,6 @@
 type ColumnType = "placement" | "buffer";
 
-type Color = "string";
+type Color = string;
 
 type ColumnSlot = Color | null;
 
