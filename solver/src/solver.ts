@@ -1,6 +1,7 @@
 // cli.ts
 import inquirer from "inquirer";
 import BlockSortApi from "./block-sort-api/BlockSortApi";
+import mapApiLevelState from "./mapping/mapApiLevelState";
 
 async function main(): Promise<void> {
   const api = new BlockSortApi();
@@ -8,7 +9,9 @@ async function main(): Promise<void> {
   let exit = false;
   while (!exit) {
     console.log("Waiting for level state...");
-    const levelState = await api.getLevelState();
+    const apiLevelState = await api.getLevelState();
+    const levelState = mapApiLevelState(apiLevelState);
+
     console.log("Found level state:\n");
     console.log({ levelState });
 

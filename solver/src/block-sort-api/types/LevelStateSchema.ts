@@ -32,7 +32,7 @@ export const LevelStateSchema = z.object({
     .optional(),
 });
 
-export type Move = z.infer<typeof MoveSchema>;
-export type Block = z.infer<typeof BlockSchema>;
-export type Column = z.infer<typeof ColumnSchema>;
-export type LevelState = z.infer<typeof LevelStateSchema>;
+export type ApiMove = z.infer<typeof MoveSchema>;
+export type ApiBlock = z.infer<typeof BlockSchema>;
+export type ApiColumn = z.infer<typeof ColumnSchema>;
+export type ApiLevelState = z.infer<typeof LevelStateSchema>;

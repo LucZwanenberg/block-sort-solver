@@ -1,10 +1,10 @@
 import WebSocketService from "../support/websockets/WebSocketService";
 import { Message, MessagesSchema } from "./types/MessagesSchema";
-import { LevelState } from "./types/LevelStateSchema";
+import { ApiLevelState } from "./types/LevelStateSchema";
 
 export default class BlockSortApi {
-  private levelState: LevelState | null = null;
-  private levelStateListeners: ((levelState: LevelState) => void)[] = [];
+  private levelState: ApiLevelState | null = null;
+  private levelStateListeners: ((levelState: ApiLevelState) => void)[] = [];
   private webSocketService: WebSocketService<Message>;
 
   public constructor() {
@@ -23,7 +23,7 @@ export default class BlockSortApi {
       const message: Message = result.data;
 
       if ("levelState" in message) {
-        const levelState: LevelState = message.levelState;
+        const levelState: ApiLevelState = message.levelState;
 
         this.levelState = levelState;
         this.levelStateListeners.forEach((listener) => listener(levelState));
@@ -36,12 +36,13 @@ export default class BlockSortApi {
     });
   }
 
-  public getLevelState(): Promise<LevelState> {
+  public getLevelState(): Promise<ApiLevelState> {
     return new Promise((resolve) => {
-      if (this.levelState !== null) return this.levelState;
-      this.levelStateListeners.push((state) => {
-        resolve(state);
-      });
+      if (this.levelState !== null) resolve(this.levelState);
+      else
+        this.levelStateListeners.push((state) => {
+          resolve(state);
+        });
     });
   }
 }

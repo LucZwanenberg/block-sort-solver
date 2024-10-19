@@ -24,7 +24,6 @@ export default class WebSocketService<MessageType> {
     });
 
     ws.on("message", (data: unknown) => {
-      console.log(`Received from server: ${data}`);
       const result = this.schema.safeParse(JSON.parse(`${data}`));
 
       if (!result.success) {
