@@ -1,6 +1,5 @@
 import pluginJs from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
-import pluginReact from "eslint-plugin-react";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
 import globals from "globals";
@@ -13,11 +12,7 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ...pluginReact.configs.flat.recommended,
     settings: {
-      react: {
-        version: "detect",
-      },
     },
   },
   eslintConfigPrettier,
@@ -26,12 +21,6 @@ export default [
       "simple-import-sort": simpleImportSort,
     },
     rules: {
-      "react/prop-types": "off", // Does not work nicely with React.FC TS declarations
-
-      // Enable these if your TSConfig is preserve and you don't need a React import in scope for JSX
-      "react/react-in-jsx-scope": "off",
-      "react/jsx-uses-react": "off",
-
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^ignore" },
@@ -41,8 +30,6 @@ export default [
         "error",
         {
           groups: [
-            // Packages `react` related packages come first.
-            ["^react", "^@?\\w"],
             // Internal packages.
             ["^(@/ui)(/.*|$)"],
             ["^(@|components)(/.*|$)"],
