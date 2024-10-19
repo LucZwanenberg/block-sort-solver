@@ -49,7 +49,8 @@ export const Level: React.FC<Props> = ({
   storagePrefix = "",
 }) => {
   const { sendMessage } = useWebSocket((message) => {
-    console.log({ message });
+    console.log(message);
+
     switch (message.type) {
       case "MAKE_MOVE":
         move(message.from as number, message.to as number);
@@ -57,6 +58,13 @@ export const Level: React.FC<Props> = ({
 
       case "SET_LEVEL_STATE":
         setLevelState(() => message.levelState as LevelState);
+        return;
+
+      case "REQUEST_LEVEL_STATE":
+        sendMessage({
+          type: "LEVEL_STATE",
+          levelState,
+        });
         return;
     }
   });

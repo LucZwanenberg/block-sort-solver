@@ -1,23 +1,15 @@
 import WebSocket from "ws";
-import { WebSocketMessage } from "./WebSocketMessage";
+import { ZodSchema } from "zod";
 
-const URL = "ws://localhost:8080";
-
-export default class WebSocketService {
-  static instance: WebSocketService | null = null;
+export default class WebSocketService<MessageType> {
+  private schema: ZodSchema<MessageType>;
   private ws: WebSocket;
-  private queuedMessages: WebSocketMessage[] = [];
-  private listeners: ((message: WebSocketMessage) => void)[] = [];
+  private queuedMessages: MessageType[] = [];
+  private listeners: ((message: MessageType) => void)[] = [];
 
-  private static getInstance() {
-    if (!WebSocketService.instance)
-      WebSocketService.instance = new WebSocketService();
-
-    return WebSocketService.instance;
-  }
-
-  public constructor() {
-    this.ws = new WebSocket(URL);
+  public constructor(url: string, schema: ZodSchema<MessageType>) {
+    this.schema = schema;
+    this.ws = new WebSocket(url);
 
     this.connect(this.ws);
     this.sendMessage = this.sendMessage.bind(this);
@@ -31,9 +23,16 @@ export default class WebSocketService {
       this.queuedMessages = [];
     });
 
-    ws.on("message", (data: any) => {
+    ws.on("message", (data: unknown) => {
       console.log(`Received from server: ${data}`);
-      const message: WebSocketMessage = JSON.parse(data);
+      const result = this.schema.safeParse(JSON.parse(`${data}`));
+
+      if (!result.success) {
+        console.error(`Could not parse message: ${result.error}`);
+        return;
+      }
+
+      const message: MessageType = result.data;
       this.listeners.forEach((listener) => listener(message));
     });
 
@@ -42,17 +41,7 @@ export default class WebSocketService {
     });
   }
 
-  static sendMessage(message: WebSocketMessage) {
-    WebSocketService.getInstance().sendMessage(message);
-  }
-
-  static addMessageListener(
-    listener: (message: WebSocketMessage) => void
-  ): () => void {
-    return WebSocketService.getInstance().addMessageListener(listener);
-  }
-
-  sendMessage(message: WebSocketMessage) {
+  sendMessage(message: MessageType) {
     if (this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
     } else {
@@ -60,9 +49,7 @@ export default class WebSocketService {
     }
   }
 
-  addMessageListener(
-    listener: (message: WebSocketMessage) => void
-  ): () => void {
+  addMessageListener(listener: (message: MessageType) => void): () => void {
     this.listeners.push(listener);
     return () => {
       this.listeners = this.listeners.filter((l) => l !== listener);

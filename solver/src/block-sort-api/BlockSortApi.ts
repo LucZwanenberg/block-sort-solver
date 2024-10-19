@@ -1,37 +1,42 @@
 import WebSocketService from "../support/websockets/WebSocketService";
+import { Message, MessagesSchema } from "./types/MessagesSchema";
+import { LevelState } from "./types/LevelStateSchema";
 
 export default class BlockSortApi {
-  private static instance: BlockSortApi;
+  private levelState: LevelState | null = null;
+  private levelStateListeners: ((levelState: LevelState) => void)[] = [];
+  private webSocketService: WebSocketService<Message>;
 
-  private levelState: any = null;
-  private levelStateListeners: ((levelState: any) => void)[] = [];
+  public constructor() {
+    this.webSocketService = new WebSocketService<Message>(
+      "ws://localhost:8080",
+      MessagesSchema
+    );
 
-  private constructor() {
-    WebSocketService.addMessageListener((message) => {
+    this.webSocketService.addMessageListener((data) => {
+      const result = MessagesSchema.safeParse(data);
+      if (!result.success) {
+        console.error(`Unexpected message format received:\n${data}`);
+        return;
+      }
+
+      const message: Message = result.data;
+
       if ("levelState" in message) {
-        this.levelState = message.levelState;
-        this.levelStateListeners.forEach((listener) =>
-          listener(this.levelState)
-        );
+        const levelState: LevelState = message.levelState;
+
+        this.levelState = levelState;
+        this.levelStateListeners.forEach((listener) => listener(levelState));
         this.levelStateListeners = [];
       }
     });
+
+    this.webSocketService.sendMessage({
+      type: "REQUEST_LEVEL_STATE",
+    });
   }
 
-  public static getInstance(): BlockSortApi {
-    if (!BlockSortApi.instance) {
-      BlockSortApi.instance = new BlockSortApi();
-    }
-    return BlockSortApi.instance;
-  }
-
-  public someMethod(): void {
-    console.log("Executing some method in the Singleton class.");
-  }
-
-  public getLevelState(): Promise<any> {
-    if (this.levelState !== null) return this.levelState;
-
+  public getLevelState(): Promise<LevelState> {
     return new Promise((resolve) => {
       if (this.levelState !== null) return this.levelState;
       this.levelStateListeners.push((state) => {
