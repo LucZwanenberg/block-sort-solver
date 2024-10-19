@@ -50,6 +50,15 @@ export const Level: React.FC<Props> = ({
 }) => {
   const { sendMessage } = useWebSocket((message) => {
     console.log({ message });
+    switch (message.type) {
+      case "MAKE_MOVE":
+        move(message.from as number, message.to as number);
+        return;
+
+      case "SET_LEVEL_STATE":
+        setLevelState(() => message.levelState as LevelState);
+        return;
+    }
   });
 
   const [playState, setPlayState] = useState<
@@ -102,9 +111,10 @@ export const Level: React.FC<Props> = ({
     }
 
     const cleanup = setTimeout(() => setStarted(true), 300);
-    console.log("GOTHERE");
+
     sendMessage({
       type: "LEVEL_STARTED",
+      levelState,
     });
     return () => clearTimeout(cleanup);
   }, []);
@@ -117,12 +127,14 @@ export const Level: React.FC<Props> = ({
       setLostCounter(0);
       sendMessage({
         type: "LEVEL_WON",
+        levelState,
       });
     } else if (isStuck(levelState)) {
       setPlayState("lost");
       setLostCounter((a) => a + 1);
       sendMessage({
         type: "LEVEL_LOST",
+        levelState,
       });
     }
     if (selectStart && selectStart[2] !== levelState) {
@@ -160,17 +172,19 @@ export const Level: React.FC<Props> = ({
         setRevealed((revealed) => revealed.concat(revealedBlocks));
       }
 
+      sendMessage({
+        type: "MOVE_MADE",
+        from,
+        to,
+        levelState: updatedLevelState,
+      });
+
       return updatedLevelState;
     });
     // Detect revealed item on 'from' column, mark as revealed in
     // column, index fashion to 'reveal' fog
 
     setLevelMoves((moves) => moves.concat({ from, to }));
-    sendMessage({
-      type: "MOVE_MADE",
-      from,
-      to,
-    });
   };
 
   const onColumnClick = (columnIndex: number) => {
@@ -178,6 +192,7 @@ export const Level: React.FC<Props> = ({
       if (selectStart[0] === columnIndex) {
         sendMessage({
           type: "SELECTION_CANCELLED",
+          levelState,
         });
         setSelectStart(null);
         return;
@@ -192,6 +207,7 @@ export const Level: React.FC<Props> = ({
           type: "SELECTION_MADE",
           columnIndex,
           selectionLength: selection.length,
+          levelState,
         });
       }
     }
