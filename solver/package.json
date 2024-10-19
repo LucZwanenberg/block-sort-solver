@@ -4,6 +4,7 @@
     "start": "yarn run build && node dist/solver.js"
   },
   "dependencies": {
+    "inquirer": "^12.0.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
