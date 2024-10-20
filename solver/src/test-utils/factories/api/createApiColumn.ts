@@ -1,5 +1,5 @@
-import { ApiColumn } from "../../block-sort-api/types/LevelStateSchema";
-import { createFactory } from "./createFactory";
+import { ApiColumn } from "../../../block-sort-api/types/LevelStateSchema";
+import { createFactory } from "../createFactory";
 import { createApiBlock } from "./createApiBlock";
 
 export const createApiColumn = createFactory<ApiColumn>({

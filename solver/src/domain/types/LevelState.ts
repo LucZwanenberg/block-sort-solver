@@ -1,15 +1,5 @@
-type ColumnType = "placement" | "buffer";
+import { Column } from "./Column";
 
-type Color = string;
-
-type ColumnSlot = Color | null;
-
-type Column = {
-  type: ColumnType;
-  limitColor?: string;
-  slots: ColumnSlot[];
-};
-
-type LevelState = {
+export type LevelState = {
   columns: Column[];
 };

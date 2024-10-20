@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { createApiLevelState } from "../test-utils/factories/createApiLevelState";
-import { createApiBlock } from "../test-utils/factories/createApiBlock";
-import { createApiColumn } from "../test-utils/factories/createApiColumn";
+import { createApiLevelState } from "../test-utils/factories/api/createApiLevelState";
+import { createApiBlock } from "../test-utils/factories/api/createApiBlock";
+import { createApiColumn } from "../test-utils/factories/api/createApiColumn";
 import mapApiLevelState from "./mapApiLevelState";
+import { LevelState } from "../domain/types/LevelState";
+import { ColumnType } from "../domain/types/ColumnType";
 
 describe("mapApiLevelState", () => {
   it("runs tests", () => {
@@ -33,11 +35,11 @@ describe("mapApiLevelState", () => {
     const expected: LevelState = {
       columns: [
         {
-          type: "placement",
+          type: ColumnType.Placement,
           slots: ["white", "black", null, null],
         },
         {
-          type: "buffer",
+          type: ColumnType.Buffer,
           limitColor: "black",
           slots: ["black", "black"],
         },
