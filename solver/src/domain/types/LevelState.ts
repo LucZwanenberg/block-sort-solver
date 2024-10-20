@@ -6,6 +6,7 @@ type ColumnSlot = Color | null;
 
 type Column = {
   type: ColumnType;
+  limitColor?: string;
   slots: ColumnSlot[];
 };
 

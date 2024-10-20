@@ -10,6 +10,7 @@ const mapSlots = (column: ApiColumn): ColumnSlot[] => [
 
 const mapColumn = (column: ApiColumn): Column => ({
   type: column.type,
+  limitColor: column.limitColor,
   slots: mapSlots(column),
 });
 

@@ -19,6 +19,7 @@ describe("mapApiLevelState", () => {
         createApiColumn({
           type: "buffer",
           columnSize: 2,
+          limitColor: "black",
           blocks: [
             createApiBlock({ color: "black" }),
             createApiBlock({ color: "black" }),
@@ -37,6 +38,7 @@ describe("mapApiLevelState", () => {
         },
         {
           type: "buffer",
+          limitColor: "black",
           slots: ["black", "black"],
         },
       ],
