@@ -126,7 +126,7 @@ describe("getValidMoves", () => {
     });
 
     describe("and color limit is the same as source color", () => {
-      it.only("can move to target column", () => {
+      it("can move to target column", () => {
         const levelState = state([
           /* ->️ 0 */ [PLCMNT, "🟦🟥⬜⬜"],
           /*    1 */ [BUFFER, "⬜⬜⬜⬜", limit("🟥")],
