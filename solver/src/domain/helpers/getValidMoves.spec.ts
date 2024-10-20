@@ -1,25 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createLevelState } from "../../test-utils/factories/domain/createLevelState";
 import { getValidMoves } from "./getValidMoves";
-import { createColumn } from "../../test-utils/factories/domain/createColumn";
 import { Move } from "../types/Move";
 import { ColumnType } from "../types/ColumnType";
 import { Column } from "../types/Column";
-import { ColumnSlot } from "../types/ColumnSlot";
-
-const slots = {
-  none: { slots: [] },
-  empty: { slots: [null, null, null] },
-  with: (...colors: (string | null)[]) => ({ slots: colors }),
-  full: {
-    with: (colors: string | string[]) => ({
-      slots: colors instanceof Array ? colors : [colors, colors, colors],
-    }),
-  },
-  partial: {
-    with: (...colors: string[]) => ({ slots: [...colors, null, null] }),
-  },
-};
+import { createLevelStateLazy as state } from "../../test-utils/factories/domain/createLevelStateLazy";
 
 const PLCMNT = ColumnType.Placement;
 const BUFFER = ColumnType.Buffer;
@@ -27,46 +11,6 @@ const BUFFER = ColumnType.Buffer;
 const limit = (color: string): Partial<Column> => ({
   limitColor: color,
 });
-
-type ColumnData = ColumnSlot[] | string | ColumnType | Partial<Column>;
-
-const columnDataToPartial = (data: ColumnData): Partial<Column> => {
-  if (data === ColumnType.Buffer) return { type: ColumnType.Buffer };
-  if (data === ColumnType.Placement) return { type: ColumnType.Placement };
-
-  if (data instanceof Array)
-    return { slots: data.map((value) => (value === "⬜" ? null : value)) };
-
-  if (typeof data === "string")
-    return {
-      slots: Array.from(data)
-        .filter((value) => value !== "⬛")
-        .map((value) => (value === "⬜" ? null : value)),
-    };
-
-  return data;
-};
-
-const col = (...overrideParts: ColumnData[]): Column =>
-  createColumn(
-    overrideParts.reduce<Partial<Column>>(
-      (partial, columnData) => ({
-        ...partial,
-        ...columnDataToPartial(columnData),
-      }),
-      {}
-    )
-  );
-
-const cols = (...overrideParts: ColumnData[][]): Column[] =>
-  overrideParts.map((parts) => col(...parts));
-
-type Cols = Parameters<typeof cols>;
-
-const state = (columns: Cols) =>
-  createLevelState({
-    columns: cols(...columns),
-  });
 
 const analyze = (moves: Move[]) => ({
   source: (index: number) => ({
