@@ -13,23 +13,12 @@ const limit = (color: string): Partial<Column> => ({
 });
 
 describe("queryColumn", () => {
-  describe("#index", () => {
-    it("is equal to given index", () => {
-      const column = createColumn();
-      const index = 42;
-
-      const result = queryColumn(column, index);
-
-      expect(result.index).toEqual(42);
-    });
-  });
-
   describe("#playableTopStack", () => {
     describe("when column has no slots", () => {
       it("returns empty stack", () => {
         const column = createColumn([]);
 
-        const { playableTopStack } = queryColumn(column, 42);
+        const { playableTopStack } = queryColumn(column);
 
         expect(playableTopStack.empty).toEqual(true);
       });
@@ -39,7 +28,7 @@ describe("queryColumn", () => {
       it("returns empty stack", () => {
         const column = createColumn([null, null, null, null]);
 
-        const { playableTopStack } = queryColumn(column, 42);
+        const { playableTopStack } = queryColumn(column);
 
         expect(playableTopStack.empty).toEqual(true);
       });
@@ -49,7 +38,7 @@ describe("queryColumn", () => {
       it("returns top stack", () => {
         const column = createColumn(BUFFER, ["🟥", "🟦", "🟥", "🟥", null]);
 
-        const { playableTopStack } = queryColumn(column, 42);
+        const { playableTopStack } = queryColumn(column);
 
         expect(playableTopStack).toEqual({
           color: "🟥",
@@ -64,7 +53,7 @@ describe("queryColumn", () => {
         it("returns full stack", () => {
           const column = createColumn(BUFFER, ["🟥", "🟥", "🟥", "🟥"]);
 
-          const { playableTopStack } = queryColumn(column, 42);
+          const { playableTopStack } = queryColumn(column);
 
           expect(playableTopStack).toEqual({
             color: "🟥",
@@ -78,7 +67,7 @@ describe("queryColumn", () => {
         it("is locked and returns empty stack", () => {
           const column = createColumn(PLCMNT, ["🟥", "🟥", "🟥", "🟥"]);
 
-          const { playableTopStack } = queryColumn(column, 42);
+          const { playableTopStack } = queryColumn(column);
 
           expect(playableTopStack.empty).toEqual(true);
         });
@@ -88,7 +77,7 @@ describe("queryColumn", () => {
       it("returns top stack", () => {
         const column = createColumn(BUFFER, ["🟥", "🟦", "🟥", "🟥", "🟥"]);
 
-        const { playableTopStack } = queryColumn(column, 42);
+        const { playableTopStack } = queryColumn(column);
 
         expect(playableTopStack).toEqual({
           color: "🟥",
@@ -105,7 +94,7 @@ describe("queryColumn", () => {
         const column = createColumn(BUFFER, ["🟥", "🟦", "🟥", "🟥", "🟥"]);
         const stackToPlace = createStack("🟥", 1);
 
-        const { mayPlaceStack } = queryColumn(column, 42);
+        const { mayPlaceStack } = queryColumn(column);
 
         expect(mayPlaceStack(stackToPlace)).toEqual(0);
       });
@@ -116,7 +105,7 @@ describe("queryColumn", () => {
         const column = createColumn(BUFFER, ["🟥", "🟦", "🟥", null, null]);
         const stackToPlace = createStack("🟦", 1);
 
-        const { mayPlaceStack } = queryColumn(column, 42);
+        const { mayPlaceStack } = queryColumn(column);
 
         expect(mayPlaceStack(stackToPlace)).toEqual(0);
       });
@@ -128,7 +117,7 @@ describe("queryColumn", () => {
           const column = createColumn(BUFFER, ["🟥", "🟦", "🟥", null, null]);
           const stackToPlace = createStack("🟥", 1);
 
-          const { mayPlaceStack } = queryColumn(column, 42);
+          const { mayPlaceStack } = queryColumn(column);
 
           expect(mayPlaceStack(stackToPlace)).toEqual(1);
         });
@@ -139,7 +128,7 @@ describe("queryColumn", () => {
           const column = createColumn(BUFFER, ["🟥", "🟦", "🟥", null, null]);
           const stackToPlace = createStack("🟥", 2);
 
-          const { mayPlaceStack } = queryColumn(column, 42);
+          const { mayPlaceStack } = queryColumn(column);
 
           expect(mayPlaceStack(stackToPlace)).toEqual(2);
         });
@@ -150,7 +139,7 @@ describe("queryColumn", () => {
           const column = createColumn(BUFFER, ["🟥", "🟦", "🟥", null, null]);
           const stackToPlace = createStack("🟥", 3);
 
-          const { mayPlaceStack } = queryColumn(column, 42);
+          const { mayPlaceStack } = queryColumn(column);
 
           expect(mayPlaceStack(stackToPlace)).toEqual(2);
         });
@@ -163,7 +152,7 @@ describe("queryColumn", () => {
           const column = createColumn([null, null, null], limit("🟦"));
           const stackToPlace = createStack("🟥", 3);
 
-          const { mayPlaceStack } = queryColumn(column, 42);
+          const { mayPlaceStack } = queryColumn(column);
 
           expect(mayPlaceStack(stackToPlace)).toEqual(0);
         });
@@ -174,7 +163,7 @@ describe("queryColumn", () => {
           const column = createColumn([null, null, null], limit("🟥"));
           const stackToPlace = createStack("🟥", 3);
 
-          const { mayPlaceStack } = queryColumn(column, 42);
+          const { mayPlaceStack } = queryColumn(column);
 
           expect(mayPlaceStack(stackToPlace)).toEqual(3);
         });

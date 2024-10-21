@@ -7,19 +7,19 @@ export const getValidMoves = (state: LevelState): Move[] => {
 
   const moves: Move[] = [];
 
-  for (let i = 0; i < columns.length; i++) {
-    const source = columns[i];
+  for (let s = 0; s < columns.length; s++) {
+    const source = columns[s];
 
     if (source.playableTopStack.empty) continue;
 
-    for (let j = 0; j < columns.length; j++) {
-      const target = columns[j];
+    for (let t = 0; t < columns.length; t++) {
+      const target = columns[t];
 
-      if (source.index === target.index) continue;
+      if (s === t) continue;
       if (target.mayPlaceStack(source.playableTopStack)) {
         moves.push({
-          source: source.index,
-          target: target.index,
+          source: s,
+          target: t,
         });
       }
     }

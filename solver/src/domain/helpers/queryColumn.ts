@@ -66,7 +66,9 @@ const analyzeColumn = ({
   };
 };
 
-export const queryColumn = (column: Column, index: number) => {
+export type QueriedColumn = ReturnType<typeof queryColumn>;
+
+export const queryColumn = (column: Column) => {
   const { topStack, emptySlots } = analyzeColumn(column);
   const isLocked = getIsLocked(column, topStack);
   const isPlayable = !topStack.empty && !isLocked;
@@ -81,7 +83,6 @@ export const queryColumn = (column: Column, index: number) => {
       : emptySlots;
 
   return {
-    index,
     playableTopStack,
     mayPlaceStack,
   };
