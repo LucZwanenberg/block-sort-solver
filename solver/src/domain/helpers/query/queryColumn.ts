@@ -1,5 +1,6 @@
 import { Color } from "../../types/Color";
 import { Column } from "../../types/Column";
+import { ColumnSlot } from "../../types/ColumnSlot";
 import {
   emptyStack,
   createStack,
@@ -71,10 +72,17 @@ const analyzeColumn = ({
   };
 };
 
-export type QueriedColumn = ReturnType<typeof queryColumn>;
+export type QueriedColumn = {
+  slots: ColumnSlot[];
+  playableTopStack: Stack;
+  mayPlaceStack: (stack: NonEmptyStack) => number;
+  forceRemove: (amount: number) => QueriedColumn;
+  forcePlaceStack: (stack: Stack) => QueriedColumn;
+};
 
-export const queryColumn = (column: Column) => {
+export const queryColumn = (column: Column): QueriedColumn => {
   const { topStack, emptySlots } = analyzeColumn(column);
+  const nonEmptySlots = column.slots.length - emptySlots;
   const isLocked = getIsLocked(column, topStack);
   const isPlayable = !topStack.empty && !isLocked;
   const playableTopStack: Stack = isPlayable ? topStack : emptyStack;
@@ -87,8 +95,33 @@ export const queryColumn = (column: Column) => {
       ? stack.size
       : emptySlots;
 
+  const forcePlaceStack = (stack: Stack): QueriedColumn => {
+    const newSize = nonEmptySlots + stack.size;
+
+    if (stack.empty) return queryColumn(column);
+
+    return queryColumn({
+      ...column,
+      slots: column.slots.map((slot, index) =>
+        slot === null && index < newSize ? stack.color : slot
+      ),
+    });
+  };
+
+  const forceRemove = (amount: number): QueriedColumn => {
+    const newSize = nonEmptySlots - amount;
+
+    return queryColumn({
+      ...column,
+      slots: column.slots.map((slot, index) => (index < newSize ? slot : null)),
+    });
+  };
+
   return {
+    slots: column.slots,
     playableTopStack,
     mayPlaceStack,
+    forcePlaceStack,
+    forceRemove,
   };
 };

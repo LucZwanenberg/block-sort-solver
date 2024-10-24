@@ -170,4 +170,54 @@ describe("queryColumn", () => {
       });
     });
   });
+
+  describe("#forcePlaceStack", () => {
+    describe("when amount is less than empty slots", () => {
+      it("fills with stack regardless of constraints", () => {
+        const column = createColumn(["🟦", null, null, null], limit("🟦"));
+        const stackToPlace = createStack("🟥", 2);
+
+        const { forcePlaceStack } = queryColumn(column);
+
+        const result = forcePlaceStack(stackToPlace);
+        expect(result.slots).toEqual(["🟦", "🟥", "🟥", null]);
+      });
+    });
+
+    describe("when amount is greater than empty slots", () => {
+      it("fills all slots with color regardless of constraints", () => {
+        const column = createColumn(["🟦", null, null, null], limit("🟦"));
+        const stackToPlace = createStack("🟥", 6);
+
+        const { forcePlaceStack } = queryColumn(column);
+
+        const result = forcePlaceStack(stackToPlace);
+        expect(result.slots).toEqual(["🟦", "🟥", "🟥", "🟥"]);
+      });
+    });
+  });
+
+  describe("#forceRemove", () => {
+    describe("when amount is less than amount", () => {
+      it("empties slots equal to amount", () => {
+        const column = createColumn(["🟦", "🟥", "🟦", null, null]);
+
+        const { forceRemove } = queryColumn(column);
+
+        const result = forceRemove(2);
+        expect(result.slots).toEqual(["🟦", null, null, null, null]);
+      });
+    });
+
+    describe("when amount is greater than amount", () => {
+      it("empties all slots", () => {
+        const column = createColumn(["🟦", "🟥", "🟦", null, null]);
+
+        const { forceRemove } = queryColumn(column);
+
+        const result = forceRemove(7);
+        expect(result.slots).toEqual([null, null, null, null, null]);
+      });
+    });
+  });
 });

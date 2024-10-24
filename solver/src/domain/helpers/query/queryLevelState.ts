@@ -1,8 +1,10 @@
 import { LevelState } from "../../types/LevelState";
-import { queryColumn } from "./queryColumn";
+import { QueriedColumn, queryColumn } from "./queryColumn";
 
-export type QueriedLevelState = ReturnType<typeof queryLevelState>;
+export type QueriedLevelState = {
+  columns: QueriedColumn[];
+};
 
-export const queryLevelState = (levelState: LevelState) => ({
+export const queryLevelState = (levelState: LevelState): QueriedLevelState => ({
   columns: levelState.columns.map(queryColumn),
 });
