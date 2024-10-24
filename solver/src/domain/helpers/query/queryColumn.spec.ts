@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { queryColumn } from "./queryColumn";
-import { createColumnLazy as createColumn } from "../../test-utils/factories/domain/createColumnLazy";
-import { ColumnType } from "../types/ColumnType";
-import { Column } from "../types/Column";
-import { createStack, Stack } from "../types/Stack";
+import { createColumnLazy as createColumn } from "../../../test-utils/factories/domain/createColumnLazy";
+import { ColumnType } from "../../types/ColumnType";
+import { Column } from "../../types/Column";
+import { createStack, Stack } from "../../types/Stack";
 
 const PLCMNT = ColumnType.Placement;
 const BUFFER = ColumnType.Buffer;

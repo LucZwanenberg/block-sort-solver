@@ -1,6 +1,11 @@
-import { Color } from "../types/Color";
-import { Column } from "../types/Column";
-import { emptyStack, createStack, Stack, NonEmptyStack } from "../types/Stack";
+import { Color } from "../../types/Color";
+import { Column } from "../../types/Column";
+import {
+  emptyStack,
+  createStack,
+  Stack,
+  NonEmptyStack,
+} from "../../types/Stack";
 
 type AllowedColors =
   | { type: "none" }

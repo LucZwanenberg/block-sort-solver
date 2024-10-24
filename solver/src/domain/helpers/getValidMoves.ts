@@ -1,10 +1,7 @@
-import { LevelState } from "../types/LevelState";
 import { Move } from "../types/Move";
-import { queryColumn } from "./queryColumn";
+import { QueriedLevelState } from "./query/queryLevelState";
 
-export const getValidMoves = (state: LevelState): Move[] => {
-  const columns = state.columns.map(queryColumn);
-
+export const getValidMoves = ({ columns }: QueriedLevelState): Move[] => {
   const moves: Move[] = [];
 
   for (let s = 0; s < columns.length; s++) {

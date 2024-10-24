@@ -4,6 +4,7 @@ import { Move } from "../types/Move";
 import { ColumnType } from "../types/ColumnType";
 import { Column } from "../types/Column";
 import { createLevelStateLazy as state } from "../../test-utils/factories/domain/createLevelStateLazy";
+import { queryLevelState } from "./query/queryLevelState";
 
 const PLCMNT = ColumnType.Placement;
 const BUFFER = ColumnType.Buffer;
@@ -23,7 +24,7 @@ describe("getValidMoves", () => {
     it("returns empty array", () => {
       const levelState = state([]);
 
-      const validMoves = getValidMoves(levelState);
+      const validMoves = getValidMoves(queryLevelState(levelState));
 
       expect(validMoves).toEqual([]);
     });
@@ -33,7 +34,7 @@ describe("getValidMoves", () => {
     it("returns empty array", () => {
       const levelState = state([[[]], [[]]]);
 
-      const validMoves = getValidMoves(levelState);
+      const validMoves = getValidMoves(queryLevelState(levelState));
 
       expect(validMoves).toEqual([]);
     });
@@ -49,7 +50,7 @@ describe("getValidMoves", () => {
           /*    3 */ [BUFFER, "⬜⬜⬜⬜"],
         ]);
 
-        const validMoves = getValidMoves(levelState);
+        const validMoves = getValidMoves(queryLevelState(levelState));
         const source = analyze(validMoves).source;
 
         expect(source(2).targets).toEqual([]);
@@ -65,7 +66,7 @@ describe("getValidMoves", () => {
           /*     3 */ [BUFFER, "⬜⬜⬜⬜"],
         ]);
 
-        const validMoves = getValidMoves(levelState);
+        const validMoves = getValidMoves(queryLevelState(levelState));
         const source = analyze(validMoves).source;
 
         expect(source(2).targets).toEqual([0, 1, 3]);
@@ -85,7 +86,7 @@ describe("getValidMoves", () => {
             /*    3 */ [BUFFER, "⬜⬜⬜⬜"],
           ]);
 
-          const validMoves = getValidMoves(levelState);
+          const validMoves = getValidMoves(queryLevelState(levelState));
           const source = analyze(validMoves).source;
 
           expect(source(2).targets).toEqual([]);
@@ -102,7 +103,7 @@ describe("getValidMoves", () => {
         /*    2 */ [PLCMNT, "🟥🟥⬛⬛⬛⬛"],
       ]);
 
-      const validMoves = getValidMoves(levelState);
+      const validMoves = getValidMoves(queryLevelState(levelState));
       const source = analyze(validMoves).source;
 
       expect(source(0).targets).toEqual([]);
@@ -118,7 +119,7 @@ describe("getValidMoves", () => {
           /*    2 */ [PLCMNT, "⬜⬜⬜⬜", limit("🟦")],
         ]);
 
-        const validMoves = getValidMoves(levelState);
+        const validMoves = getValidMoves(queryLevelState(levelState));
         const source = analyze(validMoves).source;
 
         expect(source(0).targets).toEqual([]);
@@ -133,7 +134,7 @@ describe("getValidMoves", () => {
           /*    2 */ [PLCMNT, "⬜⬜⬜⬜", limit("🟥")],
         ]);
 
-        const validMoves = getValidMoves(levelState);
+        const validMoves = getValidMoves(queryLevelState(levelState));
         const source = analyze(validMoves).source;
 
         expect(source(0).targets).toEqual([1, 2]);
